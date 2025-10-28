@@ -13,6 +13,11 @@ This project demonstrates the use of RabbitMQ as a message broker in a distribut
 For my setup I am using a local K3s cluster.
 
 #### Installation
+
+The easiest way to deploy RabbitMQ on Kubernetes is by using a Helm chart. This can be found here:
+https://artifacthub.io/packages/helm/bitnami/rabbitmq
+However, for this project, we will take the manual approach using the RabbitMQ Cluster Operator and a custom resource definition to gain more understanding of the underlying components.
+
 1. Install the RabbitMQ Cluster Operator: Ref: https://www.rabbitmq.com/kubernetes/operator/install-operator
 ```
 kubectl apply -f "https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml"
