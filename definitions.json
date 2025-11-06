@@ -1,0 +1,32 @@
+{
+  "vhosts": [{"name": "/"}],
+  "exchanges": [
+    {"name": "logs", "vhost": "/", "type": "fanout", "durable": true},
+    {"name": "logs.dlx", "vhost": "/", "type": "fanout", "durable": true}
+  ],
+  "queues": [
+    {
+      "name": "logs.raw",
+      "vhost": "/",
+      "durable": true,
+      "arguments": {"x-dead-letter-exchange": "logs.dlx"}
+    },
+    {"name": "logs.dead", "vhost": "/", "durable": true}
+  ],
+  "bindings": [
+    {
+      "source": "logs",
+      "vhost": "/",
+      "destination": "logs.raw",
+      "destination_type": "queue",
+      "routing_key": ""
+    },
+    {
+      "source": "logs.dlx",
+      "vhost": "/",
+      "destination": "logs.dead",
+      "destination_type": "queue",
+      "routing_key": ""
+    }
+  ]
+}

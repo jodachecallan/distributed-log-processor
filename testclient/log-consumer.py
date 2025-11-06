@@ -1,4 +1,17 @@
-import pika, json
+import pika, json, time, argparse
+
+# allow overriding via command line args
+parser = argparse.ArgumentParser(description="Test log consumer")
+parser.add_argument('--username', default='guest', help='RabbitMQ username')
+parser.add_argument('--password', default='guest', help='RabbitMQ password')
+parser.add_argument('--host', default='localhost', help='RabbitMQ host')
+parser.add_argument('--port', type=int, default=5672, help='RabbitMQ port')
+args = parser.parse_args()
+
+username = args.username
+password = args.password
+host = args.host
+port = args.port
 
 def callback(ch, method, properties, body):
     try:
@@ -13,11 +26,10 @@ def callback(ch, method, properties, body):
     except Exception as e:
         print("Error:", e)
         ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
-
-connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+credentials = pika.PlainCredentials(username, password)
+connection = pika.BlockingConnection(pika.ConnectionParameters(host=host, port=port, credentials=credentials))
 channel = connection.channel()
-channel.exchange_declare(exchange='logs', exchange_type='fanout', durable=True)
-result = channel.queue_declare(queue='logs.raw', durable=True)
+
 channel.queue_bind(exchange='logs', queue='logs.raw')
 
 channel.basic_qos(prefetch_count=1)
